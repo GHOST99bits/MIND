@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#111827">
+<title>MindIQ | Reasoning & Psychology Awareness</title>
+<style>
+:root{
+  --bg1:#0f172a; --bg2:#1e293b; --accent:#38bdf8; --accent2:#a78bfa;
+  --text:#f8fafc; --muted:#cbd5e1; --panel:rgba(15,23,42,.76);
+  --border:rgba(255,255,255,.13); --good:#34d399; --danger:#fb7185;
+  --shadow:0 18px 60px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text)}
+body{
+  background:
+    radial-gradient(circle at 15% 15%,color-mix(in srgb,var(--accent) 22%,transparent),transparent 34%),
+    radial-gradient(circle at 85% 20%,color-mix(in srgb,var(--accent2) 20%,transparent),transparent 32%),
+    linear-gradient(135deg,var(--bg1),var(--bg2));
+  background-attachment:fixed;
+  touch-action:manipulation;
+}
+button,input,select{font:inherit}
+button{touch-action:manipulation}
+.app{min-height:100vh;padding:14px clamp(12px,3vw,36px) 32px}
+.topbar{
+  max-width:1400px;margin:auto;display:flex;align-items:center;justify-content:space-between;
+  gap:12px;padding:10px 0 16px;position:sticky;top:0;z-index:20;
+  backdrop-filter:blur(14px)
+}
+.brand{font-weight:900;font-size:clamp(20px,3vw,30px);letter-spacing:-.04em}
+.brand span{color:var(--accent)}
+.iconbtn,.btn,.tab{
+  border:1px solid var(--border);color:var(--text);background:rgba(255,255,255,.08);
+  border-radius:14px;min-height:46px;padding:10px 16px;cursor:pointer;
+  transition:.18s transform,.18s background,.18s border-color
+}
+.iconbtn:hover,.btn:hover,.tab:hover{transform:translateY(-1px);background:rgba(255,255,255,.14);border-color:color-mix(in srgb,var(--accent) 60%,var(--border))}
+.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#06111d;border:0;font-weight:800}
+.btn.danger{background:rgba(251,113,133,.14);border-color:rgba(251,113,133,.4)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.nav{
+  max-width:1400px;margin:0 auto 18px;display:grid;grid-template-columns:repeat(2,1fr);
+  gap:8px;padding:7px;background:rgba(0,0,0,.18);border:1px solid var(--border);border-radius:18px
+}
+.tab{min-height:52px;font-weight:800}
+.tab.active{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 24%,transparent),color-mix(in srgb,var(--accent2) 20%,transparent));border-color:color-mix(in srgb,var(--accent) 65%,transparent)}
+main{max-width:1400px;margin:auto}
+.panel{
+  background:var(--panel);border:1px solid var(--border);border-radius:24px;padding:clamp(16px,3vw,28px);
+  box-shadow:var(--shadow);backdrop-filter:blur(18px)
+}
+.page{display:none}.page.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+h1{font-size:clamp(25px,4vw,42px);margin:0 0 7px}
+h2{margin:0 0 10px}.sub{color:var(--muted);margin:0 0 22px}
+label{display:grid;gap:7px;font-weight:700;color:var(--muted)}
+input[type=text],input[type=url],input[type=number],select{
+  width:100%;padding:12px 13px;border-radius:12px;border:1px solid var(--border);
+  background:rgba(0,0,0,.22);color:var(--text);outline:none;min-height:46px
+}
+input:focus,select:focus{border-color:var(--accent)}
+input[type=color]{width:100%;height:48px;padding:4px;border-radius:12px;border:1px solid var(--border);background:transparent}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:12px 0 18px}
+.stat{padding:13px;border:1px solid var(--border);border-radius:15px;background:rgba(255,255,255,.045);text-align:center}
+.stat b{display:block;font-size:22px}.stat small{color:var(--muted)}
+.iqtop{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}
+.progress{height:9px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin-bottom:18px}
+.progress>div{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:.25s;width:0}
+.question{font-size:clamp(20px,3vw,30px);font-weight:800;line-height:1.3;margin:20px 0}
+.options{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.option{text-align:left;min-height:68px;padding:15px;border-radius:16px;border:1px solid var(--border);background:rgba(255,255,255,.055);color:var(--text);cursor:pointer}
+.option:hover{background:rgba(255,255,255,.11);border-color:var(--accent)}
+.option:focus-visible,.btn:focus-visible,.tab:focus-visible,.iconbtn:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.option:active{transform:scale(.99)}
+button{ -webkit-tap-highlight-color:transparent }
+[hidden]{display:none!important}
+.sub{line-height:1.55}
+
+.loading{display:grid;place-items:center;min-height:400px;text-align:center}
+.loader{width:76px;height:76px;border-radius:50%;border:6px solid rgba(255,255,255,.12);border-top-color:var(--accent);animation:spin 1s linear infinite;margin:0 auto 20px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.iqscore{font-size:clamp(50px,10vw,90px);font-weight:950;line-height:1;color:var(--accent);margin:15px 0}
+.breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}
+.break{padding:14px;border-radius:15px;border:1px solid var(--border);background:rgba(255,255,255,.05)}
+.drawer{
+  position:fixed;right:16px;top:72px;width:min(350px,calc(100vw - 32px));z-index:50;
+  padding:18px;border-radius:20px;background:rgba(15,23,42,.97);border:1px solid var(--border);
+  box-shadow:var(--shadow);display:none
+}
+.drawer.open{display:grid;gap:12px;animation:fade .18s ease}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}.swatch{width:38px;height:38px;border-radius:50%;border:2px solid rgba(255,255,255,.5);cursor:pointer}
+.note{font-size:12px;color:var(--muted);line-height:1.45}
+@media(max-width:600px){.app{padding:8px 9px 24px}.topbar{padding:6px 0 10px}.nav{position:sticky;top:64px;z-index:18}.tab{font-size:13px;padding:8px 5px}.options{grid-template-columns:1fr}.breakdown{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">Mind<span>IQ</span></div>
+    <button class="iconbtn" id="themeBtn" aria-label="Open theme settings">🎨 Theme</button>
+  </header>
+
+  <div class="drawer" id="themeDrawer">
+    <h3 style="margin:0">Theme Customizer</h3>
+    <label>Background 1 <input type="color" id="bg1" value="#0f172a"></label>
+    <label>Background 2 <input type="color" id="bg2" value="#1e293b"></label>
+    <label>Primary accent <input type="color" id="accent" value="#38bdf8"></label>
+    <label>Secondary accent <input type="color" id="accent2" value="#a78bfa"></label>
+    <div class="swatches" id="swatches"></div>
+    <button class="btn" id="resetTheme">Reset theme</button>
+    <div class="note">Colors are saved locally on this device.</div>
+  </div>
+
+  <nav class="nav" aria-label="Game modes">
+    <button class="tab active" data-page="iq">🔢 IQ Tester</button>
+    <button class="tab" data-page="reality">MIND_CONTROL ☯️</button>
+  </nav>
+
+  <main>
+    <!-- IQ Page -->
+    <section class="page active" id="iq">
+      <div class="panel">
+        <div id="iqIntro">
+          <h1>IQ Assessment</h1>
+          <p class="sub">20 reasoning questions to practise patterns, logic, spatial thinking, and problem-solving. This is a practice quiz, not a clinical IQ test.</p>
+          <button class="btn primary" id="startIQ">Start 20-Question Practice</button>
+        </div>
+        <div id="iqQuiz" hidden>
+          <div class="iqtop"><b id="iqCounter">Question 1 of 20</b><span id="iqPct">5%</span></div>
+          <div class="progress"><div id="iqProgress"></div></div>
+          <div class="question" id="iqQuestion"></div>
+          <div class="options" id="iqOptions"></div>
+        </div>
+        <div id="iqFinish" hidden style="text-align:center">
+          <div style="font-size:58px">🧩</div>
+          <h2>Test complete</h2>
+          <p class="sub">Your answers are ready to score.</p>
+          <button class="btn primary" id="showIQ">Show My Score</button>
+        </div>
+        <div id="iqLoading" hidden class="loading">
+          <div>
+            <div class="loader"></div>
+            <h2 id="loadText">Analyzing cognitive patterns...</h2>
+            <div class="progress" style="width:min(420px,80vw);margin:auto"><div id="loadProgress"></div></div>
+          </div>
+        </div>
+        <div id="iqResult" hidden style="text-align:center">
+          <div style="font-size:58px">🏁</div>
+          <h2>Your Practice Result</h2>
+          <div class="iqscore" id="iqScore">100</div>
+          <p id="iqCategory" class="sub"></p>
+          <div class="breakdown">
+            <div class="break"><b id="iqCorrect">0/20</b><br><small>Correct</small></div>
+            <div class="break"><b id="iqAccuracy">0%</b><br><small>Accuracy</small></div>
+            <div class="break"><b id="iqBand">—</b><br><small>Band</small></div>
+          </div>
+          <button class="btn primary" id="retryIQ">Try Again</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MIND_CONTROL ☯️ Page -->
+    <section class="page" id="reality">
+      <div class="panel">
+        <div id="realityIntro">
+          <h1>MIND_CONTROL ☯️</h1>
+          <p class="sub">30 questions on psychology, manipulation awareness, critical thinking, and healthy boundaries.</p>
+          <div class="panel" style="margin:20px 0">
+            <h2>Focus Areas Covered</h2>
+            <ul style="line-height:1.8;color:var(--muted)">
+              <li>🧠 Gaslighting & emotional manipulation</li>
+              <li>🎭 Guilt-tripping & false dilemmas</li>
+              <li>🚩 Love-bombing & coercive control</li>
+              <li>🛡️ Recognizing unhealthy relationship patterns</li>
+              <li>🔍 Critical thinking & persuasive tactics</li>
+              <li>⚖️ Psychological labels & responsible assessment</li>
+              <li>🤝 Personal boundaries & safety</li>
+            </ul>
+          </div>
+          <button class="btn primary" id="startReality">Start MIND_CONTROL Assessment (30 Qs)</button>
+        </div>
+        <div id="realityQuiz" hidden>
+          <div class="iqtop"><b id="realityCounter">Question 1 of 30</b><span id="realityPct">3%</span></div>
+          <div class="progress"><div id="realityProgress"></div></div>
+          <div class="question" id="realityQuestion"></div>
+          <div class="options" id="realityOptions"></div>
+        </div>
+        <div id="realityFinish" hidden style="text-align:center">
+          <div style="font-size:58px">☯️</div>
+          <h2>Assessment Complete</h2>
+          <p class="sub">Your awareness analysis is ready.</p>
+          <button class="btn primary" id="showReality">Show MIND_CONTROL Score</button>
+        </div>
+        <div id="realityLoading" hidden class="loading">
+          <div>
+            <div class="loader"></div>
+            <h2 id="realityLoadText">Evaluating psychological awareness patterns...</h2>
+            <p class="sub">Please wait while the system processes your tactical profile.</p>
+            <div class="progress" style="width:min(420px,80vw);margin:auto"><div id="realityLoadProgress"></div></div>
+          </div>
+        </div>
+        <div id="realityResult" hidden style="text-align:center">
+          <div id="realityFeedbackEmoji" style="font-size:58px" role="img" aria-label="Random assessment feedback emoji">🧠</div>
+          <h2>Your Awareness Result</h2>
+          <div class="iqscore" id="realityScore">85%</div>
+          <p id="realityCategory" class="sub"></p>
+          <div class="breakdown">
+            <div class="break"><b id="realityCorrect">0/30</b><br><small>Correct</small></div>
+            <div class="break"><b id="realityAccuracy">0%</b><br><small>Accuracy</small></div>
+            <div class="break"><b id="realityBand">—</b><br><small>Awareness Level</small></div>
+          </div>
+          <p class="note">This is an educational awareness quiz, not a psychological diagnosis or a measure of your ability to control other people.</p>
+          <button class="btn primary" id="retryReality">Retake Assessment</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(() => {
+"use strict";
+const $ = s => document.querySelector(s); const $$ = s => [...document.querySelectorAll(s)];
+const shuffle = a => [...a].sort(() => Math.random()-.5);
+
+/* ---------- Theme ---------- */
+const themeKeys=["bg1","bg2","accent","accent2"];
+const defaults={bg1:"#0f172a",bg2:"#1e293b",accent:"#38bdf8",accent2:"#a78bfa"};
+function applyTheme(){
+  themeKeys.forEach(k=>{
+    const v=localStorage.getItem("mp_"+k)||defaults[k];
+    document.documentElement.style.setProperty("--"+k,v);
+    const el=$("#"+k); if(el) el.value=v;
+  });
+}
+themeKeys.forEach(k=>$("#"+k).addEventListener("input",e=>{
+  localStorage.setItem("mp_"+k,e.target.value); applyTheme();
+}));
+applyTheme();
+$("#themeBtn").onclick=()=>$("#themeDrawer").classList.toggle("open");
+$("#resetTheme").onclick=()=>{themeKeys.forEach(k=>localStorage.removeItem("mp_"+k));applyTheme()};
+[
+ ["#0f172a","#1e293b","#38bdf8","#a78bfa"],["#052e16","#14532d","#4ade80","#facc15"],
+ ["#172554","#312e81","#60a5fa","#c084fc"],["#431407","#7c2d12","#fb923c","#facc15"],
+ ["#18181b","#27272a","#f472b6","#22d3ee"],["#082f49","#164e63","#22d3ee","#67e8f9"]
+].forEach(p=>{
+  const b=document.createElement("button");b.className="swatch";b.title="Apply palette";
+  b.style.background=`linear-gradient(135deg,${p[0]},${p[1]})`;b.onclick=()=>{themeKeys.forEach((k,i)=>localStorage.setItem("mp_"+k,p[i]));applyTheme()};
+  $("#swatches").appendChild(b);
+});
+document.addEventListener("pointerdown",e=>{
+  const d=$("#themeDrawer"); if(d.classList.contains("open")&&!d.contains(e.target)&&e.target!==$("#themeBtn"))d.classList.remove("open"); });  /* ---------- Navigation Tabs ---------- */ $$('.tab').forEach(tab=>{
+  tab.onclick=()=>{
+    $$('.tab').forEach(t=>t.classList.remove('active'));$$
+('.page').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    $("#"+tab.dataset.page).classList.add('active');
+  };
+});
+
+/* ---------- IQ Questions ---------- */
+const iqQuestions=[
+["A sequence is 2, 6, 12, 20, 30. What comes next?",["36","40","42","44"],2],
+["If all Zibs are Loms and all Loms are Tars, which must be true?",["All Tars are Zibs","Some Tars are not Loms","All Zibs are Tars","No Zibs are Tars"],2],
+["A cube has all six faces painted. It is cut into 27 equal small cubes. How many small cubes have paint on exactly two faces?",["4","8","12","16"],2],
+["You have 3 switches outside a room and one bulb inside. You may enter once. Which strategy identifies the switch?",["Turn all on","Use heat from a bulb plus light","Randomly choose","No strategy works"],1],
+["If 5 machines make 5 items in 5 minutes, how long do 100 machines take to make 100 items?",["5 minutes","20 minutes","100 minutes","500 minutes"],0],
+["A clock shows 3:15. What is the smaller angle between the hands?",["0°","7.5°","15°","22.5°"],1],
+["Which word is least like the others?",["Triangle","Square","Circle","Rectangle"],2],
+["A farmer has 17 sheep. All but 9 run away. How many remain?",["8","9","17","0"],1],
+["If yesterday was Monday, what day is the day after tomorrow?",["Tuesday","Wednesday","Thursday","Friday"],2],
+["Which number completes 3, 9, 27, 81, ?",["162","189","243","324"],2],
+["You fold a square paper once vertically and once horizontally, then punch one hole through the center. When unfolded, how many holes appear?",["1","2","3","4"],3],
+["A person walks 3 km north, then 3 km east. In a straight line, are they farther than 3 km from the start?",["Yes","No","Exactly 3 km","Impossible to tell"],0],
+["Which is the odd one out?",["16","25","36","48"],3],
+["If CAT becomes DBU by shifting every letter forward one, DOG becomes:",["EPH","EOG","DPH","FQI"],0],
+["A rectangle is twice as long as it is wide. If its perimeter is 30, what is its area?",["40","50","60","75"],1],
+["You are given a glass of water, a coin and a piece of paper. Which is most likely to float?",["Coin","Paper","Glass","All"],1],
+["Two people start with the same amount. One doubles it, then subtracts 10. The other subtracts 10, then doubles. Do they get the same result?",["Always","Never","Only if starting amount is 10","Cannot know"],0],
+["A map scale is 1 cm = 5 km. Two towns are 7 cm apart on the map. What is the real distance?",["12 km","25 km","35 km","40 km"],2],
+["What comes next: ▲, ▲▲, ▲▲▲, ?",["▲","▲▲▲▲","■","○"],1],
+["If you rearrange the letters in 'LISTEN', which word can be formed?",["SILENT","TINSEL?","ENLIST?","All listed"],3]
+];
+let iq={questions:[],index:0,answers:[]};
+function startIQ(){
+  iq={questions:shuffle(iqQuestions).slice(0,20),index:0,answers:[]};
+  $("#iqIntro").hidden=true;$("#iqResult").hidden=true;$("#iqFinish").hidden=true;$("#iqLoading").hidden=true;$("#iqQuiz").hidden=false;showIQQuestion();
+}
+function showIQQuestion(){
+  const q=iq.questions[iq.index];$("#iqCounter").textContent=`Question ${iq.index+1} of 20`;
+  $("#iqPct").textContent=`${Math.round((iq.index+1)/20*100)}%`;$("#iqProgress").style.width=`${(iq.index+1)/20*100}%`;
+  $("#iqQuestion").textContent=q[0];const box=$("#iqOptions");box.innerHTML="";
+  const choices=shuffle(q[1].map((text,originalIndex)=>({text,originalIndex})));
+  q.currentCorrect=choices.findIndex(item=>item.originalIndex===q[2]);
+  choices.forEach((item,i)=>{const b=document.createElement("button");b.className="option";b.type="button";b.textContent=String.fromCharCode(65+i)+". "+item.text;b.onclick=()=>{if(b.disabled)return;box.querySelectorAll("button").forEach(x=>x.disabled=true);answerIQ(i)};box.appendChild(b)});
+}
+function answerIQ(choice){
+  iq.answers.push(choice);iq.index++;
+  if(iq.index>=20){$("#iqQuiz").hidden=true;$("#iqFinish").hidden=false}
+  else showIQQuestion();
+}
+const LOADING_DURATION=9000;
+let loadTimer=null;
+function calculateIQ(){
+  $("#iqFinish").hidden=true;$("#iqLoading").hidden=false;
+  const messages=["Analyzing cognitive patterns...","Processing spatial accuracy...","Comparing reasoning responses...","Evaluating numerical patterns...","Calculating IQ score..."];
+  clearInterval(loadTimer);
+  const startedAt=performance.now();
+  $("#loadProgress").style.width="0%";
+  $("#loadText").textContent=messages[0];
+  loadTimer=setInterval(()=>{
+    const elapsed=Math.min(LOADING_DURATION,performance.now()-startedAt);
+    $("#loadProgress").style.width=(elapsed/LOADING_DURATION*100)+"%";
+    const idx=Math.min(messages.length-1,Math.floor(elapsed/(LOADING_DURATION/messages.length)));
+    $("#loadText").textContent=messages[idx];
+    if(elapsed>=LOADING_DURATION){
+      clearInterval(loadTimer);loadTimer=null;
+      $("#loadProgress").style.width="100%";
+      $("#iqLoading").hidden=true;
+      showIQResult();
+    }
+  },50);
+}
+function showIQResult(){
+  let correct=0;iq.questions.forEach((q,i)=>{if(iq.answers[i]===q.currentCorrect)correct++});
+  const score=Math.max(70,Math.min(145,Math.round(70+(correct/20)*75)));
+  let category=score<85?"Developing range":score<100?"Below average range":score<115?"Average range":score<130?"Above average range":"Very high range";
+  const band=correct<=6?"Foundational":correct<=10?"Developing":correct<=14?"Solid":correct<=17?"Strong":"Advanced";
+  $("#iqResult").hidden=false;
+  $("#iqScore").textContent=score;$("#iqCategory").textContent=category;
+  $("#iqCorrect").textContent=`${correct}/20`;$("#iqAccuracy").textContent=`${correct*5}%`;$("#iqBand").textContent=band;
+}
+$("#startIQ").onclick=startIQ;$("#showIQ").onclick=calculateIQ;$("#retryIQ").onclick=startIQ;
+
+/* ---------- MIND_CONTROL ☯️ Questions (30 Dedicated Psychology & Dark Psychology Questions) ---------- */
+const realityQuestions=[
+/* 🧠 Gaslighting & Emotional Manipulation */
+["Gaslighting is best recognized as a pattern of:",["Repeatedly undermining someone's confidence in their perception or memory","Respectfully disagreeing once","Offering clear objective evidence","Setting a clear personal boundary"],0],
+["When someone denies events happened that you clearly remember, a common manipulation effect is:",["Second-guessing your own memory and sanity","Increased clarity and confidence","Better mutual understanding","Neutral problem-solving"],0],
+["A manipulator creates artificial urgency primarily to:",["Reduce time for careful thinking and independent advice","Help everyone compare choices calmly","Make facts easier to verify","Ensure informed consent"],0],
+["A person constantly shifts blame during conflict. This is often done to avoid:",["Responsibility for their own actions","Every possible misunderstanding","A fair conversation","A clear factual record"],0],
+/* 🎭 Guilt-Tripping & False Dilemmas */
+["A guilt trip usually tries to influence someone by:",["Making them feel responsible or ashamed to force agreement","Giving them time to choose freely","Explaining a boundary calmly","Sharing neutral facts"],0],
+["A false dilemma is a persuasion tactic that:",["Presents only two choices when more options exist","Clearly lists all reasonable options","Asks an open-ended question","Checks a fact using reliable evidence"],0],
+["A person says, 'If you cared about me, you would do this.' This most clearly uses:",["Emotional pressure to equate compliance with care","A neutral request with no pressure","A scientific explanation","A mutual boundary"],0],
+["Silent treatment used repeatedly as a punishment is best described as:",["A manipulative control tactic, depending on context and repetition","Always a healthy conflict resolution skill","Proof of a specific clinical diagnosis","A reliable way to solve every disagreement"],0],
+/* 🚩 Love-Bombing & Coercive Control */
+["Love-bombing can be concerning when intense affection is used to:",["Create rapid dependency or pressure for commitment","Build trust slowly while respecting limits","Offer support without expectations","Communicate honestly"],0],
+["Which is a warning sign of coercive control in a relationship?",["A person repeatedly monitors and restricts another person's choices","Partners discuss boundaries mutually","Friends respect privacy","Someone says no and it is accepted"],0],
+["Intermittent reinforcement makes a harmful relationship confusing because:",["Unpredictable rewards encourage someone to keep hoping for change","It guarantees a healthy relationship","It removes all emotional attachment instantly","It proves the other person has a diagnosis"],0],
+["A person repeatedly tells you that nobody else cares about you. This is an attempt to:",["Isolate you from support and increase dependency","Encourage healthy friendships","Promote independent decision-making","Resolve a factual disagreement"],0],
+/* 🛡️ Recognizing Unhealthy Relationship Patterns */
+["If someone apologizes but repeatedly repeats the same harmful behavior, it is reasonable to:",["Consider the ongoing pattern and whether behavior changes","Treat the apology alone as proof of change","Ignore the impact on you","Assume you caused it"],0],
+["Triangulation in a conflict often means:",["Pulling a third person into the dispute to pressure or divide people","Inviting a neutral mediator with everyone's consent","Checking a source independently","Taking time to cool off"],0],
+["A 'moving goalpost' tactic happens when someone:",["Keeps changing the standard after you meet it","States clear expectations in advance","Admits a mistake","Accepts reasonable evidence"],0],
+["A person selectively quotes only parts of a conversation to mislead others. This is:",["Misrepresentation through selective information","A complete and neutral account","Active listening","A fair summary"],0],
+/* 🔍 Critical Thinking & Persuasive Tactics */
+["Which approach can help check whether a persuasive claim is trustworthy?",["Verify evidence and compare independent sources","Trust confidence and charisma alone","Ignore contradictory evidence","Share it before checking"],0],
+["Confirmation bias is the tendency to:",["Favor information that supports existing beliefs","Forget every new skill","Hear sounds that are not present","React only with reflexes"],0],
+["Which tactic tries to discredit a person instead of addressing their argument?",["Ad hominem attack","Evidence-based rebuttal","Clarifying question","Fair comparison"],0],
+["What is a common feature of black-and-white thinking?",["Seeing situations as all good or all bad, with little nuance","Considering multiple possibilities","Updating beliefs with evidence","Recognizing mixed feelings"],0],
+/* ⚖️ Psychological Labels & Responsible Assessment */
+["Why should you avoid diagnosing someone as a narcissist based on one behavior?",["A diagnosis requires qualified assessment and broader evidence","One disagreement proves a personality disorder","Online quizzes confirm diagnoses","Labels are more reliable than behavior patterns"],0],
+["Projection as a psychological concept is best described as:",["Attributing one's own unconscious feelings or motives to someone else","Accurately summarizing another person's view","Remembering a neutral detail","Resolving conflict through compromise"],0],
+["Which statement about mental health is most accurate?",["Mental health can change and support can help","Mental health never changes","Only adults experience stress","One symptom always proves a disorder"],0],
+["A placebo effect refers to a change influenced partly by:",["Expectations and treatment context","A guaranteed cure in every case","A bacterial toxin only","A blood clot"],0],
+/* 🤝 Personal Boundaries & Safety */
+["A boundary is best understood as:",["A clear statement of what behavior you will accept and what you will do","A rule that controls another person's every choice","A punishment for disagreement","A way to avoid all communication"],0],
+["Which is an example of a healthy 'no'?",["'No, I'm not comfortable with that.'","'No, but you can keep pressuring me.'","'No, because I must punish you.'","'No, and I will decide all your choices.'"],0],
+["What is a useful first step when you feel pressured into a decision?",["Pause and give yourself time to consider options","Agree immediately to end discomfort","Ignore your own concerns","Let the other person choose everything"],0],
+["When someone repeatedly uses personal secrets to control you, a helpful response may be to:",["Seek trusted support and limit what you share with that person","Share more secrets to prove loyalty","Assume you deserve the treatment","Cut off all outside advice automatically"],0],
+["When a request includes threats or intimidation, the priority should be:",["Your safety and support from trusted people or appropriate services","Winning the argument at any cost","Keeping it secret in every circumstance","Proving the person wrong alone"],0],
+["The best way to learn about dark psychology concepts is to focus on:",["Recognizing manipulation patterns, critical thinking and protective boundaries","Practicing deception to control others","Assuming everyone is manipulating you","Using psychological labels as insults"],0]
+];
+
+
+/* ---------- Additional question bank: dark psychology awareness, reverse psychology, and human emotions ---------- */
+const additionalRealityQuestions = [
+  ["A person repeatedly denies a promise they made and insists you imagined it. What matters most?", ["Look for the repeated pattern and check reliable records", "Accept their version automatically", "Assume every disagreement is gaslighting", "Argue until they admit it"], 0],
+  ["Someone uses a private insecurity to win an argument. What does this suggest?", ["They are using personal information as leverage", "They are giving neutral feedback", "They are showing empathy", "They are resolving the disagreement"], 0],
+  ["A persuasive person asks you to keep a decision secret from trusted people. What is a sensible response?", ["Pause and seek independent advice if safe", "Treat secrecy as proof of trust", "Decide immediately", "Ignore every outside perspective"], 0],
+  ["A person alternates intense praise with harsh criticism to keep you uncertain. What should you notice?", ["The overall pattern and its effect on your wellbeing", "Only the praise", "That confusion proves affection", "That criticism is always deserved"], 0],
+  ["Someone says everyone agrees with them but offers no evidence. What should you do?", ["Ask what evidence supports the claim", "Assume the majority must be right", "Stop thinking independently", "Repeat the claim to others"], 0],
+  ["A person repeatedly interrupts and then says you never explained yourself. What is useful?", ["Calmly restate your point and notice the interaction pattern", "Accept all blame", "Raise your voice until they listen", "Give up your right to speak"], 0],
+  ["Which behavior is a warning sign of emotional blackmail?", ["Threatening consequences to force a choice", "Explaining a need while respecting your answer", "Discussing options openly", "Accepting a boundary"], 0],
+  ["Someone frames every disagreement as betrayal. What tactic may be present?", ["Pressuring loyalty instead of discussing the issue", "Evidence-based debate", "Collaborative problem-solving", "Healthy compromise"], 0],
+  ["A person insists you must answer immediately about a major decision. What helps protect your judgment?", ["Request time to think and verify details", "Agree to avoid awkwardness", "Let urgency replace evidence", "Assume delays are always harmful"], 0],
+  ["Someone takes credit for your work and says you are selfish for objecting. What is a grounded response?", ["Describe the facts and set a clear boundary", "Apologize for noticing", "Accept their story without question", "Insult them publicly"], 0],
+  ["What distinguishes persuasion from manipulation most clearly?", ["Manipulation hides pressure or undermines free choice", "Persuasion always uses threats", "Manipulation is any disagreement", "Persuasion requires instant agreement"], 0],
+  ["A person spreads selective screenshots without context. What should a careful observer do?", ["Seek the full context before judging", "Assume screenshots show everything", "Share them immediately", "Decide based on popularity"], 0],
+  ["Someone claims you owe them because they once helped you. What is important to remember?", ["Past help does not remove your right to choose", "Every favor creates unlimited debt", "You must agree to all requests", "Boundaries cancel gratitude"], 0],
+  ["A person mocks you for asking questions about their claim. What is a healthy interpretation?", ["Questions can be reasonable; check the claim independently", "Mockery proves the claim is true", "Stop asking questions forever", "Assume all confident people are dishonest"], 0],
+  ["What is a practical response to repeated boundary violations?", ["State the boundary and seek support if it continues", "Keep changing your limits to please them", "Assume they will infer your needs", "Promise never to disagree"], 0],
+  ["Why is labeling someone from one short interaction unreliable?", ["A single behavior rarely gives enough context for a fair conclusion", "Labels always reveal motives", "One mistake proves a disorder", "Online comments are clinical evidence"], 0],
+  ["Someone says you are too sensitive whenever you mention harm. What should you consider?", ["Whether they address the specific concern or dismiss it", "That feelings can never be discussed", "That your concern is automatically wrong", "That you must accept their judgment"], 0],
+  ["A person uses flattery just before asking for a large favor. What is wise?", ["Evaluate the request on its merits and your comfort", "Assume praise makes the request fair", "Agree to repay the compliment", "Ignore all practical details"], 0],
+  ["What can help you resist a misleading emotional appeal?", ["Separate the emotional message from verifiable facts", "Treat strong feelings as proof", "Ignore all emotions and evidence", "Follow the loudest speaker"], 0],
+  ["A person changes the topic whenever evidence is raised. What can you do?", ["Return calmly to the specific question", "Follow every new accusation", "Assume the issue is settled", "Make personal attacks"], 0],
+  ["What is a red flag in a request for personal information?", ["Pressure to share details before trust is established", "Respect for your choice not to answer", "A clear explanation of why details are needed", "Allowing you to decline"], 0],
+  ["A person insists only they can understand or help you. What risk can this create?", ["Dependence and isolation from other support", "Stronger independent judgment", "More access to varied perspectives", "Guaranteed safety"], 0],
+  ["Someone apologizes but says the harm was entirely your fault. What is missing?", ["Clear responsibility for their own behavior", "A detailed excuse", "A demand for forgiveness", "A claim that you are perfect"], 0],
+  ["How can you evaluate a dramatic accusation online?", ["Check credible sources and look for corroboration", "Share it because it is emotional", "Trust anonymous certainty alone", "Reject any evidence that complicates it"], 0],
+  ["What does a pattern of monitoring someone's messages without consent indicate?", ["A possible privacy and control concern", "Automatic proof of caring", "A healthy communication rule", "A normal requirement in every friendship"], 0],
+  ["A person uses a fake deadline to make you buy or agree. What is a sound response?", ["Verify the deadline and take time where possible", "Rush because pressure proves value", "Ignore the terms", "Let the seller decide for you"], 0],
+  ["Why might a manipulator portray themselves as the only victim in every conflict?", ["It can divert attention from their own actions", "It guarantees they are truthful", "It proves no one else was affected", "It removes the need for evidence"], 0],
+  ["What should you do when a person demands loyalty over honesty?", ["Consider the facts and your values rather than obeying blindly", "Hide all concerns forever", "Assume loyalty means agreement", "Reject facts that feel uncomfortable"], 0],
+  ["What is the safest way to interpret a psychology term seen on social media?", ["Treat it as a concept to learn, not a diagnosis of a person", "Use it to label anyone you dislike", "Assume short videos provide full assessment", "Apply it without context"], 0],
+  ["When someone pressures you to cut off a trusted friend, what should you notice?", ["Whether they are trying to isolate you or control your support", "That isolation always improves relationships", "That one person should choose all your friends", "That disagreement means the friend is unsafe"], 0],
+  ["Reverse psychology involves trying to influence someone by:", ["Encouraging or implying the opposite of the desired outcome", "Giving complete neutral information only", "Removing all choices", "Measuring emotions medically"], 0],
+  ["Why can reverse psychology backfire?", ["The other person may notice the tactic or react differently", "It guarantees agreement", "It removes personal autonomy", "It always improves trust"], 0],
+  ["A friend says, 'You probably can't do this,' to provoke you. What is a thoughtful response?", ["Decide based on your own goals and evidence", "Do it only to prove them wrong", "Assume the challenge is objective truth", "Let their opinion set your priorities"], 0],
+  ["Which is a more respectful alternative to reverse psychology?", ["Explain your concern directly and leave room for choice", "Use shame to provoke action", "Pretend to want the opposite", "Hide relevant information"], 0],
+  ["Why might a person resist a suggestion when they feel controlled?", ["They may be reacting to a perceived threat to autonomy", "They have no ability to reason", "Resistance proves the suggestion is wrong", "They always want the opposite"], 0],
+  ["What is psychological reactance?", ["Motivation to restore freedom when it feels restricted", "A reliable way to read minds", "A permanent personality diagnosis", "The same as empathy"], 0],
+  ["A parent says, 'I bet you won't tidy your room,' hoping to trigger action. What kind of influence is this?", ["A reverse-psychology-style challenge", "A neutral factual report", "An example of active listening", "A scientific diagnosis"], 0],
+  ["How can you tell whether a challenge reflects your own values?", ["Ask whether you would choose it without the pressure", "Measure success by proving someone wrong", "Assume the challenger knows best", "Ignore possible consequences"], 0],
+  ["Why is using reverse psychology in close relationships risky?", ["It can weaken trust when people feel tricked", "It guarantees honest communication", "It makes consent unnecessary", "It always clarifies intentions"], 0],
+  ["A colleague discourages you sarcastically to make you work harder. What is a healthy approach?", ["Focus on your own goals and seek clear feedback", "Work only to defeat the colleague", "Assume sarcasm is accurate assessment", "Respond with a bigger insult"], 0],
+  ["What makes a challenge different from informed encouragement?", ["A challenge may rely on provocation rather than clear support", "Encouragement always controls others", "Challenges always reveal truth", "There is no difference in any context"], 0],
+  ["Someone says, 'Don't tell me your opinion; you wouldn't understand.' What might happen?", ["You may feel provoked to prove yourself, but can choose not to engage", "You must answer immediately", "Their statement proves you lack knowledge", "Silence always means agreement"], 0],
+  ["Which question helps you avoid being baited by a reverse-psychology tactic?", ["Would I still want this if nobody challenged me?", "How can I win their approval fastest?", "How do I make them jealous?", "How can I ignore every risk?"], 0],
+  ["Is reverse psychology a dependable way to change someone's behavior?", ["No; reactions vary and direct respectful communication is usually clearer", "Yes, it works on everyone", "Yes, if repeated often enough", "Only with people who disagree"], 0],
+  ["If someone tells you not to succeed because they expect failure, what is most useful?", ["Use constructive evidence and your own priorities to decide next steps", "Treat their prediction as destiny", "Take every risk to disprove them", "Assume success is guaranteed"], 0],
+  ["Why can reverse psychology feel persuasive to some people?", ["It may trigger curiosity, defiance, or a desire to prove capability", "It removes emotions from decisions", "It proves the speaker has authority", "It guarantees the opposite choice"], 0],
+  ["What is a fair way to motivate a team?", ["Set a clear goal and invite input without tricking members", "Use hidden tests to shame people", "Tell each person the opposite of what you want", "Withhold the real objective"], 0],
+  ["Someone uses a dare to push you into an unsafe choice. What should guide you?", ["Your safety and values, not the dare", "Fear of looking weak", "The crowd's reaction", "The need to prove independence"], 0],
+  ["What is the difference between autonomy and defiance?", ["Autonomy means choosing thoughtfully; defiance may simply oppose a demand", "They are always identical", "Autonomy requires disagreeing with everyone", "Defiance always shows confidence"], 0],
+  ["How should you respond if you realize you used reverse psychology and it upset someone?", ["Acknowledge it and communicate directly", "Deny it no matter what", "Blame them for noticing", "Repeat the tactic more strongly"], 0],
+  ["Can reverse psychology reveal someone's true feelings with certainty?", ["No; behavior has many possible explanations", "Yes, every reaction reveals a hidden truth", "Yes, if you ask a leading question", "Only if they become angry"], 0],
+  ["What is a common ethical concern with reverse psychology?", ["It can undermine informed choice and trust", "It always increases transparency", "It guarantees equal power", "It eliminates misunderstandings"], 0],
+  ["When someone challenges your competence, what is a balanced response?", ["Consider useful feedback while rejecting pressure to prove yourself", "Assume all criticism is correct", "Ignore all feedback automatically", "Make a major decision while upset"], 0],
+  ["Which response shows independent decision-making?", ["I will think it through and choose what fits my goals", "I will do it because you said I can't", "I must prove you wrong", "I will agree so you stop talking"], 0],
+  ["Why should a person avoid using reverse psychology to get consent?", ["Consent should be freely given without deception or pressure", "Consent is unnecessary when intentions are good", "Tricks make consent more reliable", "Pressure proves willingness"], 0],
+  ["What is emotional awareness?", ["Noticing and naming feelings without immediately judging them", "Hiding every emotion", "Knowing exactly what everyone else feels", "Acting on every feeling instantly"], 0],
+  ["What is a useful first step when anger rises during a disagreement?", ["Pause, breathe, and identify what triggered the feeling", "Send the first message that comes to mind", "Assume the other person intended harm", "Make a permanent decision immediately"], 0],
+  ["Which statement best describes empathy?", ["Trying to understand another person's perspective while respecting your own", "Agreeing with everything someone says", "Taking responsibility for every feeling around you", "Predicting thoughts with certainty"], 0],
+  ["What is the difference between a feeling and a fact?", ["A feeling is real as an experience, but its interpretation may need checking", "Feelings are always false", "Facts depend only on mood", "Every strong emotion proves an assumption"], 0],
+  ["What can help when anxiety makes a situation seem certain to go badly?", ["Consider evidence, alternatives, and one manageable next step", "Treat the worst outcome as guaranteed", "Avoid all information", "Criticize yourself for feeling anxious"], 0],
+  ["What does emotional regulation mean?", ["Managing how you respond to emotions, not eliminating them", "Never feeling upset", "Controlling other people's moods", "Pretending nothing affects you"], 0],
+  ["Why can naming an emotion be helpful?", ["It can clarify what you need before choosing a response", "It makes the emotion disappear every time", "It proves someone else caused it", "It prevents reflection"], 0],
+  ["Someone seems quiet after a conversation. What is the most accurate assumption?", ["There could be many reasons; ask respectfully rather than guessing", "They definitely dislike you", "They are intentionally manipulating you", "Their silence proves guilt"], 0],
+  ["What is a healthy response to disappointment?", ["Acknowledge it and adjust plans when ready", "Pretend it never happened", "Blame yourself for everything", "Make others responsible for fixing every feeling"], 0],
+  ["What is emotional validation?", ["Recognizing that a feeling makes sense from someone's perspective", "Saying every belief is factually correct", "Agreeing to every request", "Preventing people from feeling sadness"], 0],
+  ["How can you support a friend who is upset?", ["Listen, ask what support they want, and respect their choice", "Immediately tell them they are overreacting", "Take over all their decisions", "Share their story without permission"], 0],
+  ["What is a sign of healthy emotional boundaries?", ["Caring about others while recognizing what is and is not your responsibility", "Feeling responsible for everyone's happiness", "Never helping anyone", "Demanding that others never feel upset"], 0],
+  ["Why is it useful to distinguish guilt from shame?", ["Guilt can focus on an action; shame often condemns the whole self", "They always mean exactly the same thing", "Neither can influence behavior", "Shame is always helpful"], 0],
+  ["What is a constructive response after making a mistake?", ["Take responsibility, repair harm where possible, and learn", "Decide you are a bad person forever", "Hide every detail automatically", "Blame whoever noticed"], 0],
+  ["What does emotional contagion describe?", ["How moods and emotions can spread between people", "A contagious physical illness", "A guaranteed ability to read minds", "A formal diagnosis of anger"], 0],
+  ["What is a helpful response to jealousy?", ["Identify the fear or need and communicate without controlling others", "Demand passwords to feel safe", "Treat jealousy as proof of betrayal", "Punish the person who triggered it"], 0],
+  ["What is the purpose of a cooling-off break during conflict?", ["To lower emotional intensity and return more thoughtfully", "To punish the other person indefinitely", "To avoid every difficult topic forever", "To guarantee you win"], 0],
+  ["Which is an example of an 'I' statement?", ["I felt overlooked when I wasn't included; can we talk about it?", "You always ruin everything", "You made me feel every emotion", "Everyone knows you are wrong"], 0],
+  ["Why can all-or-nothing thinking intensify emotions?", ["It leaves little room for nuance or mixed outcomes", "It always improves accuracy", "It removes uncertainty permanently", "It makes evidence unnecessary"], 0],
+  ["What can you do when you feel overwhelmed by several emotions?", ["Name them one at a time and choose a manageable next step", "Force yourself to solve everything instantly", "Assume you cannot cope", "Ignore basic needs"], 0],
+  ["What is a healthy way to receive criticism?", ["Separate specific useful feedback from insults or assumptions", "Accept every criticism as true", "Reject every suggestion automatically", "Attack the critic's character"], 0],
+  ["What is the difference between empathy and emotional responsibility?", ["You can care about someone's feelings without being responsible for controlling them", "Empathy means fixing every problem", "Responsibility means never setting limits", "They are exactly the same"], 0],
+  ["How can someone communicate sadness constructively?", ["Describe what they feel and what support might help", "Expect others to guess correctly", "Use silence as the only signal", "Blame another person for every feeling"], 0],
+  ["Why might tiredness affect emotional reactions?", ["Fatigue can reduce patience and make regulation harder", "Tiredness always reveals true character", "It makes every interpretation accurate", "It has no relationship to mood"], 0],
+  ["What is a balanced response to embarrassment?", ["Recognize it as a common feeling and consider what actually happened", "Assume everyone will remember forever", "Avoid every social situation", "Attack anyone who noticed"], 0],
+  ["What does frustration often signal?", ["A goal or expectation is being blocked and may need reassessment", "Someone else is always at fault", "Failure is inevitable", "The situation cannot change"], 0],
+  ["How can you respond to fear without letting it make every decision?", ["Assess the actual risk and choose a proportionate action", "Ignore all danger signals", "Assume every worry is a prediction", "Let someone else decide everything"], 0],
+  ["What is a useful way to handle mixed feelings about a choice?", ["Acknowledge both sides and compare values and consequences", "Pretend one feeling must be fake", "Choose whichever feeling is loudest", "Wait until you feel nothing"], 0],
+  ["Why is it risky to infer intent from impact alone?", ["An action can hurt even when the person's intention is uncertain", "Impact never matters", "Intent is always obvious", "Harm is impossible without bad intent"], 0],
+  ["What does active listening involve?", ["Paying attention, clarifying, and reflecting what you heard", "Preparing your rebuttal while they speak", "Giving advice before understanding", "Changing the topic to yourself"], 0],
+  ["What can help after an emotionally difficult conversation?", ["Reflect, rest if needed, and decide whether follow-up is useful", "Replay it endlessly as punishment", "Post private details online", "Assume the relationship is over"], 0],
+  ["What is a sign of emotional maturity?", ["Being able to acknowledge feelings while choosing a considered response", "Never changing your mind", "Winning every argument", "Never asking for help"], 0],
+  ["Why are emotions not always reliable evidence about another person's motives?", ["Feelings reflect our experience but do not reveal another mind with certainty", "Emotions are meaningless", "Every suspicion is accurate", "Only other people have emotions"], 0],
+  ["What is a healthy response when a friend sets a boundary?", ["Respect it and discuss alternatives if appropriate", "Keep pushing until they give in", "Treat it as rejection automatically", "Tell others to pressure them"], 0],
+  ["What can help de-escalate a tense conversation?", ["Use a calm tone, focus on one issue, and allow a pause", "Add more accusations", "Demand an immediate confession", "Bring up every past mistake"], 0],
+  ["What does self-compassion mean?", ["Treating yourself with understanding while still taking responsibility", "Excusing every harmful action", "Avoiding all effort", "Comparing yourself harshly to others"], 0],
+  ["How can you tell whether an apology is meaningful over time?", ["Look for accountability and sustained behavior change", "Count how emotional it sounds only", "Assume words guarantee change", "Ignore repeated patterns"], 0],
+  ["What is a useful response to feeling pressured by a group?", ["Pause and compare the request with your own values and safety", "Follow the group automatically", "Assume the majority is always right", "Hide your doubts from yourself"], 0],
+  ["Why is curiosity useful during emotional conflict?", ["It can uncover needs and facts that assumptions miss", "It proves the other person is right", "It removes the need for boundaries", "It guarantees agreement"], 0],
+  ["What is the healthiest goal in a disagreement?", ["Understand the issue and seek a fair outcome, even if you differ", "Defeat the other person at any cost", "Make them feel guilty", "Avoid facts that challenge you"], 0],
+  ["How can someone respond to another person's anger safely?", ["Keep appropriate distance, stay calm if possible, and seek help if threatened", "Assume anger gives them permission to harm", "Provoke them to test their feelings", "Promise anything to end the moment"], 0],
+  ["What is the difference between assertiveness and aggression?", ["Assertiveness states needs respectfully; aggression violates others' rights", "They are always the same", "Assertiveness means never disagreeing", "Aggression is required for boundaries"], 0],
+  ["What does a trigger mean in everyday emotional discussion?", ["A cue that brings up a strong reaction, often linked to past experience", "Proof of a diagnosis by itself", "A deliberate act by another person every time", "An emotion that cannot change"], 0],
+  ["What can you do if you misread someone's tone in a text?", ["Check your interpretation with a respectful question", "Assume the harshest meaning", "Send an angry reply immediately", "Treat punctuation as complete evidence"], 0],
+  ["Why is comparing your emotional response with someone else's not always useful?", ["People have different histories, contexts, and coping styles", "One person must be faking", "There is only one correct feeling", "Comparison always solves conflict"], 0],
+  ["What is a healthy way to respond to loneliness?", ["Reach out to safe people and choose manageable social connection", "Assume nobody cares", "Accept pressure from anyone offering attention", "Hide the feeling permanently"], 0],
+  ["What does resilience usually involve?", ["Adapting and seeking support while facing difficulty", "Never experiencing distress", "Handling every problem alone", "Always staying positive"], 0],
+  ["How can you show compassion without enabling repeated harmful behavior?", ["Offer care while maintaining clear limits and accountability", "Ignore the harm to protect their feelings", "Accept every demand", "Take responsibility for their choices"], 0],
+  ["What should you do if an intense emotion makes you want to send a harsh message?", ["Draft privately, pause, and reread before deciding whether to send", "Send it immediately", "Add more personal attacks", "Assume regret is impossible"], 0],
+  ["What is a balanced interpretation of nervousness before a presentation?", ["It is common and does not by itself predict poor performance", "It proves you are unprepared", "It guarantees failure", "It means you should quit"], 0],
+  ["Why can gratitude and sadness exist at the same time?", ["Human emotions can be mixed rather than mutually exclusive", "One emotion must be dishonest", "They cancel each other out", "Mixed emotions are impossible"], 0],
+  ["What is the value of asking, 'What do I need right now?'", ["It helps turn vague emotion into a practical next step", "It guarantees immediate happiness", "It makes others responsible", "It removes all difficult feelings"], 0],
+  ["How should you respond when someone says your feelings are wrong?", ["Explore the situation while recognizing that feelings are experiences, not verdicts", "Assume you must stop feeling them", "Assume your interpretation cannot be questioned", "Let them define your inner experience"], 0],
+  ["What is a sign that a conversation may need a pause?", ["People are too upset to listen or speak respectfully", "One person asks a thoughtful question", "Both sides summarize fairly", "Everyone has time to reflect"], 0],
+  ["How can you distinguish constructive optimism from denial?", ["Optimism acknowledges real obstacles while looking for workable steps", "Optimism ignores every risk", "Denial requires evidence", "They always mean the same thing"], 0],
+  ["What can emotional reflection help you notice?", ["Patterns, unmet needs, and choices for responding differently", "The exact thoughts of other people", "A guaranteed future outcome", "A diagnosis from one feeling"], 0],
+  ["What is a respectful way to disagree with someone's emotional interpretation?", ["Acknowledge their feeling and share your perspective without dismissing them", "Tell them their feelings are ridiculous", "Insist they must agree", "Use their emotion against them"], 0],
+  ["Why is it useful to seek help when emotions feel persistently unmanageable?", ["Support can offer coping strategies and another perspective", "It proves weakness", "Only severe crises deserve support", "It means you have failed"], 0]
+];
+
+
+let reality={questions:[],index:0,answers:[]};
+function startReality(){
+  reality={questions:shuffle([...realityQuestions,...additionalRealityQuestions]).slice(0,30),index:0,answers:[]};
+  $("#realityIntro").hidden=true;$("#realityResult").hidden=true;$("#realityFinish").hidden=true;$("#realityLoading").hidden=true;$("#realityQuiz").hidden=false;showRealityQuestion();
+}
+function showRealityQuestion(){
+  const q=reality.questions[reality.index];$("#realityCounter").textContent=`Question ${reality.index+1} of 30`;
+  $("#realityPct").textContent=`${Math.round((reality.index+1)/30*100)}%`;$("#realityProgress").style.width=`${(reality.index+1)/30*100}%`;
+  $("#realityQuestion").textContent=q[0];const box=$("#realityOptions");box.innerHTML="";
+  const choices=shuffle(q[1].map((text,originalIndex)=>({text,originalIndex})));
+  q.currentCorrect=choices.findIndex(item=>item.originalIndex===q[2]);
+  choices.forEach((item,i)=>{const b=document.createElement("button");b.className="option";b.type="button";b.textContent=String.fromCharCode(65+i)+". "+item.text;b.onclick=()=>{if(b.disabled)return;box.querySelectorAll("button").forEach(x=>x.disabled=true);answerReality(i)};box.appendChild(b)});
+}
+function answerReality(choice){
+  reality.answers.push(choice);reality.index++;
+  if(reality.index>=30){$("#realityQuiz").hidden=true;$("#realityFinish").hidden=false}
+  else showRealityQuestion();
+}
+let realityLoadTimer=null;
+function calculateReality(){
+  $("#realityFinish").hidden=true;$("#realityLoading").hidden=false;
+  const realityMessages=["Evaluating psychological awareness patterns...","Analyzing boundary recognition...","Assessing manipulative tactic resistance...","Calculating MIND_CONTROL Index..."];
+  clearInterval(realityLoadTimer);
+  const startedAt=performance.now();
+  $("#realityLoadProgress").style.width="0%";
+  $("#realityLoadText").textContent=realityMessages[0];
+  realityLoadTimer=setInterval(()=>{
+    const elapsed=Math.min(LOADING_DURATION,performance.now()-startedAt);
+    $("#realityLoadProgress").style.width=(elapsed/LOADING_DURATION*100)+"%";
+    const idx=Math.min(realityMessages.length-1,Math.floor(elapsed/(LOADING_DURATION/realityMessages.length)));
+    $("#realityLoadText").textContent=realityMessages[idx];
+    if(elapsed>=LOADING_DURATION){
+      clearInterval(realityLoadTimer);realityLoadTimer=null;
+      $("#realityLoadProgress").style.width="100%";
+      $("#realityLoading").hidden=true;
+      showRealityResult();
+    }
+  },50);
+}
+function showRealityResult(){
+  // Choose one equally likely feedback emoji when the completed assessment results are shown.
+  const feedbackEmojis=["🧠","🎭","🚩","🛡️","🔍","⚖️","🤝"];
+  $("#realityFeedbackEmoji").textContent=feedbackEmojis[Math.floor(Math.random()*feedbackEmojis.length)];
+  let correct=0;reality.questions.forEach((q,i)=>{if(reality.answers[i]===q.currentCorrect)correct++});
+  const pct=Math.round((correct/30)*100);
+  let category=pct<50?"Developing Awareness":pct<70?"Moderate Awareness":pct<85?"Strong Awareness":"Excellent Awareness";
+  const band=pct<50?"Foundation":pct<70?"Developing":pct<85?"Solid":"Master";
+  $("#realityResult").hidden=false;
+  $("#realityScore").textContent=`${pct}%`;$("#realityCategory").textContent=category;
+  $("#realityCorrect").textContent=`${correct}/30`;$("#realityAccuracy").textContent=`${pct}%`;$("#realityBand").textContent=band;
+}
+$("#startReality").onclick=startReality;$("#showReality").onclick=calculateReality;$("#retryReality").onclick=startReality;
+})();
+</script>
+</body>
+</html>
